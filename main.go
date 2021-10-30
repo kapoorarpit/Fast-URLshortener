@@ -54,16 +54,16 @@ func CreateEndpoint(w http.ResponseWriter, r *http.Request) {
 	//increment i by one
 	var url URL
 	_ = json.NewDecoder(r.Body).Decode(&url)
-	fmt.Println(url.LongURL) // this is long url
+	//fmt.Println(url.LongURL) // this is long url
 	w.Header().Set("Content-Type", "application/json")
 	url.ShortURL = "11"
 	url.Date = time.Now()
-	//fmt.Println(url.LongURL)
-	//fmt.Println(url.ShortURL)
-	//fmt.Println(url.Date)
+	fmt.Println(url.LongURL)
+	fmt.Println(url.ShortURL)
+	fmt.Println(url.Date)
 	insertdata(url)
-	json.NewEncoder(w).Encode("returning body")
-	//upto 18 miny
+	json.NewEncoder(w).Encode(url)
+	//upto 18 min
 }
 
 func insertdata(new URL) {
