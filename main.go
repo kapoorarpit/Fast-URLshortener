@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -22,9 +23,7 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	collection = (*mongo.Collection)(client.Database("URLs").Collection("col"))
-
 	fmt.Println("Collection instance is ready")
 }
 
@@ -35,13 +34,13 @@ func main() {
 	router.HandleFunc("/expand/", ExpandEndpoint).Methods("POST")
 	router.HandleFunc("/{id}", RedirectEndpoint).Methods("GET")
 	router.HandleFunc("/", Home).Methods("GET")
-	log.Fatal((http.ListenAndServe(":8000", router)))
+	log.Fatal((http.ListenAndServe(":12345", router)))
 }
 
 type URL struct {
-	LongURL  string    `json:"longURL,omitempty" bson:"_id,omitempty"`
-	shortURL string    `json:"shortURL,omitempty"`
-	date     time.Time `json:"date,omitempty"`
+	LongURL  string    `json:"longURL,omitempty" bson:"longURL,omitempty"`
+	ShortURL string    `json:"shortURL,omitempty" bson:"shortURL,omitempty"`
+	Date     time.Time `json:"date,omitempty" bson:"date,omitempty"`
 }
 
 func Home(w http.ResponseWriter, r *http.Request) {
@@ -50,14 +49,30 @@ func Home(w http.ResponseWriter, r *http.Request) {
 
 func CreateEndpoint(w http.ResponseWriter, r *http.Request) {
 	// cache will be good option to check if data already exists
-	// we haev to check if shorten URL is existing or not
+	// we have to check if shortened URL is existing or not
 	// the problem is if there is a user generating shortURL for long One
-	last_num := 0x0 // this will be the last generated url which will be retrieved from the database
+	//increment i by one
+	var url URL
+	_ = json.NewDecoder(r.Body).Decode(&url)
+	fmt.Println(url.LongURL) // this is long url
+	w.Header().Set("Content-Type", "application/json")
+	url.ShortURL = "11"
+	url.Date = time.Now()
+	//fmt.Println(url.LongURL)
+	//fmt.Println(url.ShortURL)
+	//fmt.Println(url.Date)
+	insertdata(url)
+	json.NewEncoder(w).Encode("returning body")
+	//upto 18 miny
+}
 
-	i := 1 + last_num //increment i by one
-	print(i)
-	//upto 18 min
+func insertdata(new URL) {
+	inserted, err := collection.InsertOne(context.Background(), new)
 
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(inserted.InsertedID)
 }
 
 func ExpandEndpoint(w http.ResponseWriter, r *http.Request) {
