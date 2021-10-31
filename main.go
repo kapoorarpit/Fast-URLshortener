@@ -80,7 +80,7 @@ func ExpandEndpoint(w http.ResponseWriter, r *http.Request) {
 }
 
 func RedirectEndpoint(w http.ResponseWriter, r *http.Request) {
-
+	
 }
 
 //database part skipped
