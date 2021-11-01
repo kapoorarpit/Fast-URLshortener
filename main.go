@@ -16,6 +16,7 @@ import (
 )
 
 var collection *mongo.Collection
+var coll *mongo.Collection
 
 func init() {
 	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
@@ -26,6 +27,7 @@ func init() {
 		log.Fatal(err)
 	}
 	collection = (*mongo.Collection)(client.Database("URLs").Collection("col"))
+	coll = (*mongo.Collection)(client.Database("Last").Collection("row"))
 	fmt.Println("Collection instance is ready")
 }
 
@@ -44,6 +46,10 @@ type URL struct {
 	Date     time.Time `json:"date,omitempty" bson:"date,omitempty"`
 }
 
+type LastURL struct {
+	Last int64 `json:"lastURL,omitempty" bson:"lastURL, omitempty"`
+}
+
 func Home(w http.ResponseWriter, r *http.Request) {
 	w.Write(([]byte("<h1>This is the homepage<h1>")))
 }
@@ -53,6 +59,22 @@ func CreateEndpoint(w http.ResponseWriter, r *http.Request) {
 	// we have to check if shortened URL is existing or not
 	// the problem is if there is a user generating shortURL for long One
 	//increment i by one
+	var last LastURL
+	err := coll.FindOne(context.TODO(), bson.M{"lastURL": 0}).Decode(&last)
+	if err != nil {
+		fmt.Print(err)
+		//fmt.Println("line65")
+		var new LastURL
+		new.Last = 0
+		inserted, err := coll.InsertOne(context.Background(), new)
+		fmt.Println(inserted)
+		if err != nil {
+			print(err)
+		}
+		return
+	}
+	// if last is found then do update else make a new one and send it ot frontends
+	fmt.Println(last)
 	var url URL
 	_ = json.NewDecoder(r.Body).Decode(&url)
 	//fmt.Println(url.LongURL) // this is long url
@@ -64,7 +86,6 @@ func CreateEndpoint(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(url.Date)
 	insertdata(url)
 	json.NewEncoder(w).Encode(url)
-	//upto 18 min
 }
 
 func insertdata(new URL) {
@@ -94,15 +115,12 @@ func ExpandEndpoint(w http.ResponseWriter, r *http.Request) {
 
 }
 
+//this is done
 func RedirectEndpoint(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	fmt.Println(params["id"] + "line98")
 	fmt.Println("this reached line 99")
 	long := findurl(params["id"])
 	//json.NewEncoder(w).Encode(long)
-	http.Redirect(w, r, long, 301)
+	http.Redirect(w, r, long, http.StatusPermanentRedirect)
 }
-
-//database part skipped
-
-//skipped cluster at 14:40 to 16:00
