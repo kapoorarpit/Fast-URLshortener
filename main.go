@@ -99,7 +99,8 @@ func RedirectEndpoint(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(params["id"] + "line98")
 	fmt.Println("this reached line 99")
 	long := findurl(params["id"])
-	json.NewEncoder(w).Encode(long)
+	//json.NewEncoder(w).Encode(long)
+	http.Redirect(w, r, long, 301)
 }
 
 //database part skipped
