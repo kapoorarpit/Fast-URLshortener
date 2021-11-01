@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"time"
 
+	bc "github.com/chtison/baseconverter"
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -68,20 +69,27 @@ func CreateEndpoint(w http.ResponseWriter, r *http.Request) {
 			print(err)
 		}
 	}
-	// if last is found then do update else make a new one and send it ot frontends
 	fmt.Print("line 71")
 	fmt.Println(last)
 	result, _ := coll.UpdateOne(context.TODO(), bson.M{"lastURL": last.Last}, bson.M{"$set": bson.M{"lastURL": last.Last + 1}})
 	fmt.Println(result)
 	var url URL
 	_ = json.NewDecoder(r.Body).Decode(&url)
-	//fmt.Println(url.LongURL) // this is long url
+	//fmt.Println(url.LongURL) // this is long url strconv.FormatInt(int64(last.Last), 10)
+	//var buf bytes.Buffer
+	//encode(100, &buf, strconv.FormatInt(int64(last.Last), 10))
+	//fmt.Println(buf.String())
+	var number string = strconv.FormatInt(1000000000, 10)
+	var inBase string = "0123456789"
+	var toBase string = "!#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"
+	converted, _, _ := bc.BaseToBase(number, inBase, toBase)
+	fmt.Println(converted)
 	w.Header().Set("Content-Type", "application/json")
-	url.ShortURL = strconv.FormatInt(int64(last.Last), 10)
+	url.ShortURL = converted
 	url.Date = time.Now()
-	fmt.Println(url.LongURL)
-	fmt.Println(url.ShortURL)
-	fmt.Println(url.Date)
+	//fmt.Println(url.LongURL)
+	//fmt.Println(url.ShortURL)
+	//fmt.Println(url.Date)
 	insertdata(url)
 	json.NewEncoder(w).Encode(url)
 }
