@@ -21,7 +21,6 @@ var coll *mongo.Collection
 
 func init() {
 	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
-	//ctx, _ := context.WithTimeout(context.Background(), 10+time.Second)
 	client, err := mongo.Connect(context.Background(), clientOptions)
 
 	if err != nil {
@@ -33,7 +32,6 @@ func init() {
 }
 
 func main() {
-	//client, _ = mongo.Connect(ctx, "mongodb://localhost:27017")
 	router := mux.NewRouter()
 	router.HandleFunc("/shorten", CreateEndpoint).Methods("POST")
 	router.HandleFunc("/{id}", RedirectEndpoint).Methods("GET")
@@ -69,21 +67,15 @@ func CreateEndpoint(w http.ResponseWriter, r *http.Request) {
 			print(err)
 		}
 	}
-	fmt.Print("line 71")
-	fmt.Println(last)
-	result, _ := coll.UpdateOne(context.TODO(), bson.M{"lastURL": last.Last}, bson.M{"$set": bson.M{"lastURL": last.Last + 1}})
-	fmt.Println(result)
+	coll.UpdateOne(context.TODO(), bson.M{"lastURL": last.Last}, bson.M{"$set": bson.M{"lastURL": last.Last + 1}})
+	//fmt.Println(result)
 	var url URL
 	_ = json.NewDecoder(r.Body).Decode(&url)
-	//fmt.Println(url.LongURL) // this is long url strconv.FormatInt(int64(last.Last), 10)
-	//var buf bytes.Buffer
-	//encode(100, &buf, strconv.FormatInt(int64(last.Last), 10))
-	//fmt.Println(buf.String())
-	var number string = strconv.FormatInt(1000000000, 10)
+	//fmt.Println(url.LongURL)
+	var number string = strconv.FormatInt(last.Last, 10)
 	var inBase string = "0123456789"
 	var toBase string = "!#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"
 	converted, _, _ := bc.BaseToBase(number, inBase, toBase)
-	fmt.Println(converted)
 	w.Header().Set("Content-Type", "application/json")
 	url.ShortURL = converted
 	url.Date = time.Now()
@@ -92,6 +84,14 @@ func CreateEndpoint(w http.ResponseWriter, r *http.Request) {
 	//fmt.Println(url.Date)
 	insertdata(url)
 	json.NewEncoder(w).Encode(url)
+}
+
+//this is done
+func RedirectEndpoint(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	long := findurl(params["id"])
+	//json.NewEncoder(w).Encode(long)
+	http.Redirect(w, r, long, http.StatusPermanentRedirect)
 }
 
 func insertdata(new URL) {
@@ -105,25 +105,10 @@ func insertdata(new URL) {
 
 func findurl(short string) string {
 	var long URL
-	fmt.Println("line 80" + short)
 	err := collection.FindOne(context.TODO(), bson.M{"shortURL": short}).Decode(&long)
 
 	if err != nil {
 		fmt.Println(err)
 	}
 	return long.LongURL
-}
-
-func ExpandEndpoint(w http.ResponseWriter, r *http.Request) {
-
-}
-
-//this is done
-func RedirectEndpoint(w http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r)
-	fmt.Println(params["id"] + "line98")
-	fmt.Println("this reached line 99")
-	long := findurl(params["id"])
-	//json.NewEncoder(w).Encode(long)
-	http.Redirect(w, r, long, http.StatusPermanentRedirect)
 }
