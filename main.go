@@ -6,11 +6,11 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -55,31 +55,29 @@ func Home(w http.ResponseWriter, r *http.Request) {
 }
 
 func CreateEndpoint(w http.ResponseWriter, r *http.Request) {
-	// cache will be good option to check if data already exists
-	// we have to check if shortened URL is existing or not
-	// the problem is if there is a user generating shortURL for long One
-	//increment i by one
 	var last LastURL
-	err := coll.FindOne(context.TODO(), bson.M{"lastURL": 0}).Decode(&last)
+	err := coll.FindOne(context.TODO(), bson.M{}).Decode(&last)
 	if err != nil {
 		fmt.Print(err)
-		//fmt.Println("line65")
 		var new LastURL
 		new.Last = 0
 		inserted, err := coll.InsertOne(context.Background(), new)
+		last = new
 		fmt.Println(inserted)
 		if err != nil {
 			print(err)
 		}
-		return
 	}
 	// if last is found then do update else make a new one and send it ot frontends
+	fmt.Print("line 71")
 	fmt.Println(last)
+	result, _ := coll.UpdateOne(context.TODO(), bson.M{"lastURL": last.Last}, bson.M{"$set": bson.M{"lastURL": last.Last + 1}})
+	fmt.Println(result)
 	var url URL
 	_ = json.NewDecoder(r.Body).Decode(&url)
 	//fmt.Println(url.LongURL) // this is long url
 	w.Header().Set("Content-Type", "application/json")
-	url.ShortURL = "1111"
+	url.ShortURL = strconv.FormatInt(int64(last.Last), 10)
 	url.Date = time.Now()
 	fmt.Println(url.LongURL)
 	fmt.Println(url.ShortURL)
@@ -100,9 +98,6 @@ func insertdata(new URL) {
 func findurl(short string) string {
 	var long URL
 	fmt.Println("line 80" + short)
-	get, _ := primitive.ObjectIDFromHex(short)
-	fmt.Print(get)
-	fmt.Println("line84")
 	err := collection.FindOne(context.TODO(), bson.M{"shortURL": short}).Decode(&long)
 
 	if err != nil {
