@@ -9,6 +9,8 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -31,7 +33,6 @@ func main() {
 	//client, _ = mongo.Connect(ctx, "mongodb://localhost:27017")
 	router := mux.NewRouter()
 	router.HandleFunc("/shorten", CreateEndpoint).Methods("POST")
-	router.HandleFunc("/expand/", ExpandEndpoint).Methods("POST")
 	router.HandleFunc("/{id}", RedirectEndpoint).Methods("GET")
 	router.HandleFunc("/", Home).Methods("GET")
 	log.Fatal((http.ListenAndServe(":12345", router)))
@@ -56,7 +57,7 @@ func CreateEndpoint(w http.ResponseWriter, r *http.Request) {
 	_ = json.NewDecoder(r.Body).Decode(&url)
 	//fmt.Println(url.LongURL) // this is long url
 	w.Header().Set("Content-Type", "application/json")
-	url.ShortURL = "11"
+	url.ShortURL = "1111"
 	url.Date = time.Now()
 	fmt.Println(url.LongURL)
 	fmt.Println(url.ShortURL)
@@ -75,12 +76,30 @@ func insertdata(new URL) {
 	fmt.Println(inserted.InsertedID)
 }
 
+func findurl(short string) string {
+	var long URL
+	fmt.Println("line 80" + short)
+	get, _ := primitive.ObjectIDFromHex(short)
+	fmt.Print(get)
+	fmt.Println("line84")
+	err := collection.FindOne(context.TODO(), bson.M{"shortURL": short}).Decode(&long)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+	return long.LongURL
+}
+
 func ExpandEndpoint(w http.ResponseWriter, r *http.Request) {
 
 }
 
 func RedirectEndpoint(w http.ResponseWriter, r *http.Request) {
-	
+	params := mux.Vars(r)
+	fmt.Println(params["id"] + "line98")
+	fmt.Println("this reached line 99")
+	long := findurl(params["id"])
+	json.NewEncoder(w).Encode(long)
 }
 
 //database part skipped
