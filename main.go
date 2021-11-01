@@ -70,8 +70,12 @@ func CreateEndpoint(w http.ResponseWriter, r *http.Request) {
 	coll.UpdateOne(context.TODO(), bson.M{"lastURL": last.Last}, bson.M{"$set": bson.M{"lastURL": last.Last + 1}})
 	//fmt.Println(result)
 	var url URL
+	var exist URL
 	_ = json.NewDecoder(r.Body).Decode(&url)
-	//fmt.Println(url.LongURL)
+	collection.FindOne(context.TODO(), bson.M{"longURL": url.LongURL}).Decode(&exist)
+	if exist.LongURL != "" {
+		json.NewEncoder(w).Encode(exist)
+	}
 	var number string = strconv.FormatInt(last.Last, 10)
 	var inBase string = "0123456789"
 	var toBase string = "!#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"
