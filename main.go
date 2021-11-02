@@ -22,7 +22,8 @@ var coll *mongo.Collection
 func init() {
 	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
 	client, err := mongo.Connect(context.Background(), clientOptions)
-
+	then := time.Now().AddDate(0, -6, 0)
+	collection.DeleteMany(context.TODO(), bson.M{"date": bson.M{"$lt": then}})
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -51,6 +52,7 @@ type LastURL struct {
 
 func Home(w http.ResponseWriter, r *http.Request) {
 	w.Write(([]byte("<h1>This is the homepage<h1>")))
+	deleteendpoint()
 }
 
 func CreateEndpoint(w http.ResponseWriter, r *http.Request) {
@@ -75,6 +77,7 @@ func CreateEndpoint(w http.ResponseWriter, r *http.Request) {
 	collection.FindOne(context.TODO(), bson.M{"longURL": url.LongURL}).Decode(&exist)
 	if exist.LongURL != "" {
 		json.NewEncoder(w).Encode(exist)
+		return
 	}
 	var number string = strconv.FormatInt(last.Last, 10)
 	var inBase string = "0123456789"
@@ -115,4 +118,14 @@ func findurl(short string) string {
 		fmt.Println(err)
 	}
 	return long.LongURL
+}
+
+func deleteendpoint() {
+	for range time.Tick(time.Hour * 4380) {
+		then := time.Now().AddDate(0, -6, 0)
+		//fmt.Println(then)
+		//fmt.Println(time.Now())
+		result, _ := collection.DeleteMany(context.TODO(), bson.M{"date": bson.M{"$lt": then}})
+		fmt.Println(result)
+	}
 }
