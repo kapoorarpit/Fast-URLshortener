@@ -22,8 +22,8 @@ var coll *mongo.Collection
 func init() {
 	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
 	client, err := mongo.Connect(context.Background(), clientOptions)
-	then := time.Now().AddDate(0, -6, 0)
-	collection.DeleteMany(context.TODO(), bson.M{"date": bson.M{"$lt": then}})
+	//then := time.Now().AddDate(0, -6, 0)
+	//collection.DeleteMany(context.TODO(), bson.M{"date": bson.M{"$lt": then}})
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -38,6 +38,7 @@ func main() {
 	router.HandleFunc("/{id}", RedirectEndpoint).Methods("GET")
 	router.HandleFunc("/", Home).Methods("GET")
 	log.Fatal((http.ListenAndServe(":12345", router)))
+	deleteendpoint()
 }
 
 type URL struct {
@@ -51,8 +52,7 @@ type LastURL struct {
 }
 
 func Home(w http.ResponseWriter, r *http.Request) {
-	w.Write(([]byte("<h1>This is the homepage<h1>")))
-	deleteendpoint()
+	w.Write(([]byte("<h1>We offer Url shortening service<h1>")))
 }
 
 func CreateEndpoint(w http.ResponseWriter, r *http.Request) {
@@ -84,6 +84,10 @@ func CreateEndpoint(w http.ResponseWriter, r *http.Request) {
 	var toBase string = "!#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"
 	converted, _, _ := bc.BaseToBase(number, inBase, toBase)
 	w.Header().Set("Content-Type", "application/json")
+	if converted == "~~~~~~" {
+		coll.UpdateOne(context.TODO(), bson.M{"lastURL": last.Last}, bson.M{"$set": bson.M{"lastURL": 0}})
+	}
+
 	url.ShortURL = converted
 	url.Date = time.Now()
 	//fmt.Println(url.LongURL)

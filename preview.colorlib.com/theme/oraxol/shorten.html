@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Fast-URLShortener</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/4.5.6/css/ionicons.min.css">
+<link rel="stylesheet" href="css/A.animate.css+flaticon.css+tiny-slider.css+glightbox.min.css+aos.css+style.css,Mcc.W1uBoTnV2t.css.pagespeed.cf.ZHcSg7Vwgd.css" />
+</head>
+<body>
+<nav class="navbar navbar-expand-lg  ftco-navbar-light">
+<div class="container-xl">
+<a class="navbar-brand d-flex align-items-center" href="index.html">
+<div class="icon-logo d-flex align-items-center justify-content-center"><span class="flaticon flaticon-layers"></span></div>
+<span class="">Hi there!</span>
+</a>
+<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+<span class="fa fa-bars"></span> Menu
+</button>
+<div class="collapse navbar-collapse" id="navbarSupportedContent">
+<ul class="navbar-nav ml-auto mb-2 mb-lg-0">
+<li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+<li class="nav-item"><a class="nav-link" href="shorten.html">Shorten-URL</a></li>
+<li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="ftco-section" id="scroll">
+<div class="container-fluid">
+<div class="row justify-content-center">
+<div class="col-md-11 heading-section mb-5" data-aos="fade-up" data-aos-duration="1000">
+<h2 class="mb-4">Shorten your URL here</h2>
+</div>
+</div>
+<div class="row no-gutters justify-content-center">
+<div class="col-md-12">
+<div class="wrapper">
+<div class="row g-0">
+<div class="col-lg-6" data-aos="zoom-in-down" data-aos-duration="1000" data-aos-delay="100">
+<div class="contact-wrap w-100 p-md-5 p-4">
+<h3>Enter URL</h3>
+<div id="contactForm" name="contactForm" class="contactForm">
+<div class="row">
+<div class="col-md-12">
+<div class="form-group">
+<input type="text" class="form-control" name="name" id="long" placeholder="ex - www.google.com">
+</div>
+</div>
+<div class="col-md-12">
+<div class="form-group">
+<input type="submit" value="Send Message" id="submit" >
+<div class="submitting"></div>
+</div>
+</div>
+</div>
+</div>
+<br>
+<br>
+<p id="a"class="btn-custom"> </p>
+<div class="w-100 social-media mt-5">
+<h3>Follow me here</h3>
+<p>
+<a href="https://github.com/kapoorarpit/">Github</a>
+<a href="https://www.linkedin.com/in/arpit-kapoor---/">LinkedIn</a>
+</p>
+</div>
+</div>
+</div>
+<div class="col-lg-6 d-flex align-items-stretch" data-aos="zoom-in-down" data-aos-duration="1000" data-aos-delay="200">
+<div class="img w-100" style="background-image:url(images/img1.jpg)"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</footer>
+<script >
+  var k = "Shortened url will be displayed here"
+  document.getElementById("a").innerText=k
+  document.getElementById("submit").addEventListener("click",function(event){
+      var long=document.getElementById("long").value.trim()
+      const todo = {
+      "longURL": long
+      };
+      console.log(fetch('http://localhost:12345/shorten'),{
+        method : 'POST',
+        mode : 'no-cors',
+        body : JSON.stringify(todo),
+        credentials: 'same-origin',
+        headers: {
+        'Content-Type': 'application/json'
+      },
+      })
+      document.getElementById("a").innerText=k
+    })
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+<script src="js/tiny-slider.js"></script>
+<script src="js/glightbox.min.js+rellax.min.js+aos.js+google-map.js+main.js.pagespeed.jc.aC1JTmZd_u.js"></script><script>eval(mod_pagespeed_HLDosaJIS$);</script>
+<script>eval(mod_pagespeed_39UVDxhGdP);</script>
+<script>eval(mod_pagespeed_E5IYZiwZoq);</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBVWaKrjvy3MaE7SQ74_uJiULgl1JY0H2s&sensor=false"></script>
+<script>eval(mod_pagespeed_KVkzdC4lCV);</script>
+<script>eval(mod_pagespeed_ZiUqlhpZJT);</script>
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-23581568-13"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-23581568-13');
+</script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"rayId":"6a7c213327762cda","token":"cd0b4b3a733644fc843ef0b185f98241","version":"2021.10.0","si":100}'></script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"rayId":"6a7c213319012cda","token":"cd0b4b3a733644fc843ef0b185f98241","version":"2021.10.0","si":100}'></script>
+</body>
+</html>
