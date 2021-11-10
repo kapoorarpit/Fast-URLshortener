@@ -10,6 +10,7 @@ import (
 	"time"
 
 	bc "github.com/chtison/baseconverter"
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -37,7 +38,11 @@ func main() {
 	router.HandleFunc("/shorten", CreateEndpoint).Methods("POST")
 	router.HandleFunc("/{id}", RedirectEndpoint).Methods("GET")
 	router.HandleFunc("/", Home).Methods("GET")
-	log.Fatal((http.ListenAndServe(":12345", router)))
+	//log.Fatal((http.ListenAndServe(":12345", router)))
+	credentials := handlers.AllowCredentials()
+	methods := handlers.AllowedMethods([]string{"POST"})
+	origins := handlers.AllowedOrigins([]string{"localhost:5000"})
+	log.Fatal(http.ListenAndServe(":12345", handlers.CORS(credentials, methods, origins)(router)))
 	deleteendpoint()
 }
 
@@ -55,7 +60,14 @@ func Home(w http.ResponseWriter, r *http.Request) {
 	w.Write(([]byte("<h1>We offer Url shortening service<h1>")))
 }
 
+func setupResponse(w *http.ResponseWriter, req *http.Request) {
+	(*w).Header().Set("Access-Control-Allow-Origin", "*")
+	(*w).Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+	(*w).Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+}
+
 func CreateEndpoint(w http.ResponseWriter, r *http.Request) {
+	//w.Header().Set("mode", "no-cors")
 	var last LastURL
 	err := coll.FindOne(context.TODO(), bson.M{}).Decode(&last)
 	if err != nil {
@@ -84,6 +96,7 @@ func CreateEndpoint(w http.ResponseWriter, r *http.Request) {
 	var toBase string = "!#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"
 	converted, _, _ := bc.BaseToBase(number, inBase, toBase)
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	if converted == "~~~~~~" {
 		coll.UpdateOne(context.TODO(), bson.M{"lastURL": last.Last}, bson.M{"$set": bson.M{"lastURL": 0}})
 	}
@@ -94,6 +107,7 @@ func CreateEndpoint(w http.ResponseWriter, r *http.Request) {
 	//fmt.Println(url.ShortURL)
 	//fmt.Println(url.Date)
 	insertdata(url)
+	setupResponse(&w, r)
 	json.NewEncoder(w).Encode(url)
 }
 

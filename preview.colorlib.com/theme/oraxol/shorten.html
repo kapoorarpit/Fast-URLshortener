@@ -88,16 +88,17 @@
       const todo = {
       "longURL": long
       };
-      console.log(fetch('http://localhost:12345/shorten'),{
+      var q = (fetch('http://localhost:12345/shorten'),{
+        credentials: 'include',
         method : 'POST',
-        mode : 'no-cors',
         body : JSON.stringify(todo),
-        credentials: 'same-origin',
         headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'text/plain'
       },
       })
-      document.getElementById("a").innerText=k
+  
+      console.log(q.body)
+      //document.getElementById("a").innerText=k
     })
 </script>
 <script src="js/bootstrap.bundle.min.js"></script>
