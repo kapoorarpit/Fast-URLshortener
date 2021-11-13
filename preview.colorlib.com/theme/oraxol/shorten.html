@@ -89,6 +89,7 @@
       "longURL": long
       };
       var q = (fetch('http://localhost:12345/shorten'),{
+        mode : 'no-cors',
         credentials: 'include',
         method : 'POST',
         body : JSON.stringify(todo),
