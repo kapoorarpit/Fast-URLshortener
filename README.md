@@ -5,7 +5,9 @@
 * It is a clever tool that assigns serial numbers to long URLs and returns a Base100 value of the serial number.
 * Here URLs are short and service is cost effective.
 * URL also gets expired after 6 months.
-* HLD design -  
+
+# HLD design - https://github.com/kapoorarpit/Fast-URLshortener/blob/master/HLD.md
+# LLD design - https://github.com/kapoorarpit/Fast-URLshortener/blob/master/LLD.md 
 
 ![1](img/1.png)
 <br>
