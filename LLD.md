@@ -1,11 +1,11 @@
-​
-#LLD Document 
 
-#System architecture
+# LLD Document 
+
+# System architecture
 
 ![2](img/3.png)
 
-#Methods Involved
+# Methods Involved
 
 1. "ShortenURL"   
     * GenerateURL(URL)
@@ -21,4 +21,3 @@
 4. "RemoveExpiredData"
     * Collect_Data()
     * RemoveEntries()
-​
