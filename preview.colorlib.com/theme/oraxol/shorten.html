@@ -80,28 +80,29 @@
 </div>
 </section>
 </footer>
-<script >
+<script>
   var k = "Shortened url will be displayed here"
-  document.getElementById("a").innerText=k
-  document.getElementById("submit").addEventListener("click",function(event){
+document.getElementById("a").innerText=k
+
+document.getElementById("submit").addEventListener("click",function(event){
       var long=document.getElementById("long").value.trim()
       const todo = {
-      "longURL": long
-      };
-      var q = (fetch('http://localhost:12345/shorten'),{
-        mode : 'no-cors',
-        credentials: 'include',
-        method : 'POST',
-        body : JSON.stringify(todo),
-        headers: {
-        'Content-Type': 'text/plain'
-      },
-      })
-  
-      console.log(q.body)
-      //document.getElementById("a").innerText=k
-    })
+        "longURL": long
+        };
+  fetch("https://myproxxyserver.herokuapp.com/https://url--shortener-server.herokuapp.com/shorten", {
+    method: "POST",
+    body: JSON.stringify(todo),
+    headers: {"Content-type": "application/json; charset=UTF-8"}
+  })
+  .then(response => response.json()).
+  then(json => {console.log(json.shortURL)
+    document.getElementById("a").innerText="shortened url is : https://url--shortener-server.herokuapp.com/"+ json.shortURL})
+  //then(u => console.log(u.shortURL));
+
+},)
 </script>
+
+
 <script src="js/bootstrap.bundle.min.js"></script>
 <script src="js/tiny-slider.js"></script>
 <script src="js/glightbox.min.js+rellax.min.js+aos.js+google-map.js+main.js.pagespeed.jc.aC1JTmZd_u.js"></script><script>eval(mod_pagespeed_HLDosaJIS$);</script>

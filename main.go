@@ -20,7 +20,7 @@ var collection *mongo.Collection
 var coll *mongo.Collection
 
 func init() {
-	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
+	clientOptions := options.Client().ApplyURI("mongodb+srv://arpit:8445007708arpit@cluster0.zy1b3.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
 	client, err := mongo.Connect(context.Background(), clientOptions)
 	//then := time.Now().AddDate(0, -6, 0)
 	//collection.DeleteMany(context.TODO(), bson.M{"date": bson.M{"$lt": then}})
@@ -35,11 +35,11 @@ func init() {
 func main() {
 	router := mux.NewRouter()
 	//deleteendpoint()
+
 	router.HandleFunc("/shorten", CreateEndpoint).Methods("POST")
 	router.HandleFunc("/{id}", RedirectEndpoint).Methods("GET")
 	router.HandleFunc("/", Home).Methods("GET")
-
-	log.Fatal((http.ListenAndServe(":12345", router)))
+	log.Fatal(http.ListenAndServe(":12345", router))
 }
 
 type URL struct {
@@ -56,16 +56,7 @@ func Home(w http.ResponseWriter, r *http.Request) {
 	w.Write(([]byte("<h1>We offer Url shortening service<h1><h1>Looks like original URL is unvalid or expired</h1>")))
 }
 
-func setupResponse(w *http.ResponseWriter, req *http.Request) {
-	(*w).Header().Set("Access-Control-Allow-Origin", "*")
-	(*w).Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-	(*w).Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
-	(*w).Header().Set("mode", "no-cors")
-}
-
 func CreateEndpoint(w http.ResponseWriter, r *http.Request) {
-	//w.Header().Set("mode", "no-cors")
-	setupResponse(&w, r)
 	var last LastURL
 	err := coll.FindOne(context.TODO(), bson.M{}).Decode(&last)
 	if err != nil {
@@ -103,7 +94,6 @@ func CreateEndpoint(w http.ResponseWriter, r *http.Request) {
 	//fmt.Println(url.ShortURL)
 	//fmt.Println(url.Date)
 	insertdata(url)
-	setupResponse(&w, r)
 	json.NewEncoder(w).Encode(url)
 }
 

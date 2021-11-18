@@ -1,3 +1,6 @@
+to use this tool click here - https://kapoorarpit.github.io/frontend-URLshortener/shorten.html
+
+
 # Fast-URLshortener
 
 # How this URL-shortener is different from others??
