@@ -8,8 +8,12 @@ to use this tool click here - https://kapoorarpit.github.io/frontend-URLshortene
 * It is a clever tool that assigns serial numbers to long URLs and returns a Base100 value of the serial number.
 * Here URLs are short and service is cost effective.
 * URL also gets expired after 6 months.
-* HLD design -  
 
+# HLD design - https://github.com/kapoorarpit/Fast-URLshortener/blob/master/HLD.md
+# LLD design - https://github.com/kapoorarpit/Fast-URLshortener/blob/master/LLD.md 
+<br>
+<br>
+Front end page to make a request from backend API service.
 ![1](img/1.png)
 <br>
 here is the backend API (displayed using postman service). 
