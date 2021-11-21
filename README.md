@@ -18,3 +18,4 @@ Front end page to make a request from backend API service.
 ![1](https://github.com/kapoorarpit/Fast-URLshortener/blob/master/img/1.png)
 <br>
 here is the backend API (displayed using postman service). 
+![2](https://github.com/kapoorarpit/Fast-URLshortener/blob/master/img/2.png)
