@@ -14,10 +14,7 @@ to use this tool click here - https://kapoorarpit.github.io/frontend-URLshortene
 <br>
 <br>
 Front end page to make a request from backend API service.
+
 ![1](https://github.com/kapoorarpit/Fast-URLshortener/blob/master/img/1.png)
 <br>
 here is the backend API (displayed using postman service). 
-![2](img/2.png)
-
-
-![1](https://github.com/kapoorarpit/Password-assistant/blob/main/screenshots/1%20(1).png)
